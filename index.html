@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Townhouse — Gastos compartilhados</title>
+<title>Gastos das Casas</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/tabler-icons-outline.min.css">
 <style>
   :root {
@@ -98,10 +98,60 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:300}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  @media(max-width:600px){
-    .summary-grid{grid-template-columns:1fr 1fr}
-    table.list th:nth-child(5),table.list td:nth-child(5),
-    table.list th:nth-child(6),table.list td:nth-child(6){display:none}
+
+  /* ---- MOBILE RESPONSIVO ---- */
+  @media(max-width:640px){
+    .wrap{padding:16px 12px 60px}
+
+    /* Header compacto */
+    header.top{gap:10px;margin-bottom:18px}
+    .brand h1{font-size:18px}
+    .brand .sub{font-size:11px}
+    .brand .mark{width:32px;height:32px;font-size:15px}
+    .sync-pill{font-size:11px;padding:5px 10px}
+
+    /* Tabs: ícone só, sem texto */
+    nav.tabs button{padding:10px 12px;font-size:0}
+    nav.tabs button i{font-size:18px}
+
+    /* Métricas: 2 por linha */
+    .summary-grid{grid-template-columns:1fr 1fr;gap:8px}
+    .metric{padding:12px 14px}
+    .metric .value{font-size:20px}
+
+    /* Cards das casas: empilhados */
+    .houses-grid{grid-template-columns:1fr;gap:10px}
+
+    /* Blocos com padding menor */
+    section.block{padding:14px 14px}
+    section.block h2{font-size:14px}
+
+    /* Formulários: 1 coluna */
+    .form-grid{grid-template-columns:1fr}
+
+    /* Tabelas: scroll horizontal + colunas ocultas */
+    .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px}
+    table.list{min-width:380px;font-size:12.5px}
+    table.list th,table.list td{padding:8px 6px 8px 0}
+
+    /* Tabela de gastos: ocultar Casa A, Casa B, Pago por (ficam na aba Pagamentos) */
+    .exp-col-va,.exp-col-vb,.exp-col-pago{display:none}
+
+    /* Tabela de integrantes: ocultar contato */
+    .mem-col-contato{display:none}
+
+    /* Pay rows: empilhar em coluna */
+    .pay-row{flex-wrap:wrap;gap:6px}
+    .pay-row .who{min-width:100%;order:1}
+    .pay-row .amt{order:2;font-size:13px}
+    .pay-row .sbtn{order:3;font-size:11px;padding:3px 8px}
+
+    /* Saldo card */
+    .saldo-card{flex-direction:column;gap:6px}
+    .saldo-amount{font-size:18px}
+
+    /* Botões de ação */
+    button.btn{font-size:13px;padding:9px 14px}
   }
 </style>
 </head>
@@ -111,7 +161,7 @@
   <header class="top">
     <div class="brand">
       <div class="mark"><i class="ti ti-home-2"></i></div>
-      <div><h1>Gastos do townhouse</h1><div class="sub">Divisão de custos entre as duas casas</div></div>
+      <div><h1>Gastos das Casas</h1><div class="sub">Divisão de custos entre as duas casas</div></div>
     </div>
     <div class="sync-pill"><span class="dot" id="sdot"></span><span id="slabel">Conectando...</span></div>
   </header>
@@ -133,7 +183,9 @@
     <div class="houses-grid" id="houses-grid"></div>
     <section class="block">
       <h2><i class="ti ti-clock"></i> Últimos gastos</h2>
+      <div class="table-scroll">
       <table class="list"><thead><tr><th>Descrição</th><th>Divisão</th><th class="num">Valor</th><th class="num">Data</th></tr></thead><tbody id="recent-tbody"></tbody></table>
+      </div>
       <div class="empty" id="recent-empty" style="display:none"><i class="ti ti-receipt-off"></i>Nenhum gasto lançado ainda.</div>
     </section>
   </div>
@@ -171,14 +223,16 @@
     </section>
     <section class="block">
       <h2><i class="ti ti-list"></i> Todos os gastos</h2>
+      <div class="table-scroll">
       <table class="list">
         <thead><tr>
           <th style="width:22%">Descrição</th><th style="width:9%">Data</th><th style="width:13%">Divisão</th>
-          <th class="num" style="width:13%">Total</th><th class="num" style="width:10%">Casa A</th><th class="num" style="width:10%">Casa B</th>
-          <th style="width:14%">Pago por</th><th style="width:36px"></th>
+          <th class="num exp-col-va" style="width:13%">Total</th><th class="num exp-col-va" style="width:10%">Casa A</th><th class="num exp-col-vb" style="width:10%">Casa B</th>
+          <th class="exp-col-pago" style="width:14%">Pago por</th><th style="width:36px"></th>
         </tr></thead>
         <tbody id="exp-tbody"></tbody>
       </table>
+      </div>
       <div class="empty" id="exp-empty" style="display:none"><i class="ti ti-receipt-off"></i>Nenhum gasto cadastrado ainda.</div>
     </section>
   </div>
@@ -218,7 +272,9 @@
     </section>
     <section class="block">
       <h2><i class="ti ti-users"></i> Integrantes cadastrados</h2>
-      <table class="list"><thead><tr><th>Nome</th><th>Casa</th><th>Contato</th><th style="width:36px"></th></tr></thead><tbody id="mem-tbody"></tbody></table>
+      <div class="table-scroll">
+      <table class="list"><thead><tr><th>Nome</th><th>Casa</th><th class="mem-col-contato">Contato</th><th style="width:36px"></th></tr></thead><tbody id="mem-tbody"></tbody></table>
+      </div>
       <div class="empty" id="mem-empty" style="display:none"><i class="ti ti-users"></i>Nenhum integrante cadastrado ainda.</div>
     </section>
   </div>
@@ -483,10 +539,10 @@ function render(){
       <td class="truncate">${esc(e.descricao)}</td>
       <td>${fd(e.data)}</td>
       <td>${divLabel(e)}</td>
-      <td class="num"><input type="number" min="0" step="0.01" value="${Number(e.valor).toFixed(2)}" style="text-align:right;width:100%;padding:6px 8px" onchange="updVal('${e.id}',this.value)"></td>
-      <td class="num">${brl(s.vA)}</td>
-      <td class="num">${brl(s.vB)}</td>
-      <td><select style="padding:6px 8px;font-size:12.5px" onchange="updPago('${e.id}',this.value)">
+      <td class="num exp-col-va"><input type="number" min="0" step="0.01" value="${Number(e.valor).toFixed(2)}" style="text-align:right;width:100%;padding:6px 8px" onchange="updVal('${e.id}',this.value)"></td>
+      <td class="num exp-col-va">${brl(s.vA)}</td>
+      <td class="num exp-col-vb">${brl(s.vB)}</td>
+      <td class="exp-col-pago"><select style="padding:6px 8px;font-size:12.5px" onchange="updPago('${e.id}',this.value)">
         <option value="" ${!e.pago_por?'selected':''}>Ninguém</option>
         <option value="a" ${e.pago_por==='a'?'selected':''}>${esc(na)}</option>
         <option value="b" ${e.pago_por==='b'?'selected':''}>${esc(nb)}</option>
@@ -534,7 +590,7 @@ function render(){
 
   // Members
   document.getElementById('mem-tbody').innerHTML=S.members.map(m=>
-    `<tr><td class="truncate">${esc(m.nome)}</td><td><span class="tag ${m.casa}">${esc(S.hn[m.casa])}</span></td><td class="truncate">${esc(m.contato||'—')}</td><td><button class="icon-btn" onclick="delMem('${m.id}')"><i class="ti ti-trash"></i></button></td></tr>`
+    `<tr><td class="truncate">${esc(m.nome)}</td><td><span class="tag ${m.casa}">${esc(S.hn[m.casa])}</span></td><td class="truncate mem-col-contato">${esc(m.contato||'—')}</td><td><button class="icon-btn" onclick="delMem('${m.id}')"><i class="ti ti-trash"></i></button></td></tr>`
   ).join('');
   document.getElementById('mem-empty').style.display=S.members.length?'none':'block';
 }
