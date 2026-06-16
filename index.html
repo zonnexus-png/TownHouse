@@ -335,7 +335,7 @@ document.getElementById('btn-add-exp').addEventListener('click',async()=>{
   if(!valor||valor<=0){toast('Informe um valor válido.',true);return;}
   btn.disabled=true;
   try{
-    const[exp]=await POST('expenses',{desc,valor,data,divisao,pct_a,pago_por});
+    const[exp]=await POST('expenses',{descricao:desc,valor,data,divisao,pct_a,pago_por});
     S.expenses.unshift(exp);
     const rows=calcPays(exp).map(r=>({...r,expense_id:exp.id}));
     if(rows.length){const pays=await POST('payments',rows);S.payments.push(...pays);}
@@ -521,7 +521,7 @@ function render(){
     });
     document.getElementById('pay-'+c).innerHTML=pays.map(p=>{
       const exp=S.expenses.find(e=>e.id===p.expense_id);
-      const desc=exp?exp.descricaoricao:'(gasto removido)',date=exp?fd(exp.data):'';
+      const desc=exp?exp.descricao:'(gasto removido)',date=exp?fd(exp.data):'';
       const src=p.tipo==='reembolso'?`Reembolso a ${esc(S.hn[p.destino])}`:p.tipo==='proprio'?'Pago diretamente (parte própria)':'A pagar';
       return`<div class="pay-row">
         <div class="who"><div class="desc">${esc(desc)} <span style="color:var(--ink-faint);font-size:12px">· ${date}</span></div><span class="src">${src}</span></div>
