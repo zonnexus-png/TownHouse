@@ -97,9 +97,6 @@
   .spinner{width:28px;height:28px;border:2px solid var(--line-strong);border-top-color:var(--ink);border-radius:50%;animation:spin .7s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
   .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:300}
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-  /* ---- MOBILE RESPONSIVO ---- */
   @media(max-width:640px){
     .wrap{padding:16px 12px 60px}
 
@@ -110,9 +107,11 @@
     .brand .mark{width:32px;height:32px;font-size:15px}
     .sync-pill{font-size:11px;padding:5px 10px}
 
-    /* Tabs: ícone só, sem texto */
-    nav.tabs button{padding:10px 12px;font-size:0}
-    nav.tabs button i{font-size:18px}
+    /* Tabs: ícone + texto curto, distribuídos igualmente */
+    nav.tabs{gap:0;justify-content:stretch}
+    nav.tabs button{flex:1;padding:8px 4px;font-size:11px;flex-direction:column;gap:3px;justify-content:center;text-align:center}
+    nav.tabs button i{font-size:20px}
+    nav.tabs button .tab-label{display:block}
 
     /* Métricas: 2 por linha */
     .summary-grid{grid-template-columns:1fr 1fr;gap:8px}
@@ -129,18 +128,18 @@
     /* Formulários: 1 coluna */
     .form-grid{grid-template-columns:1fr}
 
-    /* Tabelas: scroll horizontal + colunas ocultas */
+    /* Tabelas: scroll horizontal */
     .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -14px;padding:0 14px}
-    table.list{min-width:380px;font-size:12.5px}
+    table.list{min-width:340px;font-size:12.5px}
     table.list th,table.list td{padding:8px 6px 8px 0}
 
-    /* Tabela de gastos: ocultar Casa A, Casa B, Pago por (ficam na aba Pagamentos) */
+    /* Tabela de gastos: ocultar colunas extras */
     .exp-col-va,.exp-col-vb,.exp-col-pago{display:none}
 
     /* Tabela de integrantes: ocultar contato */
     .mem-col-contato{display:none}
 
-    /* Pay rows: empilhar em coluna */
+    /* Pay rows: empilhar */
     .pay-row{flex-wrap:wrap;gap:6px}
     .pay-row .who{min-width:100%;order:1}
     .pay-row .amt{order:2;font-size:13px}
@@ -150,7 +149,7 @@
     .saldo-card{flex-direction:column;gap:6px}
     .saldo-amount{font-size:18px}
 
-    /* Botões de ação */
+    /* Botões */
     button.btn{font-size:13px;padding:9px 14px}
   }
 </style>
@@ -166,10 +165,10 @@
     <div class="sync-pill"><span class="dot" id="sdot"></span><span id="slabel">Conectando...</span></div>
   </header>
   <nav class="tabs">
-    <button class="active" data-tab="dashboard"><i class="ti ti-layout-dashboard"></i> Painel</button>
-    <button data-tab="gastos"><i class="ti ti-receipt-2"></i> Gastos</button>
-    <button data-tab="pagamentos"><i class="ti ti-cash"></i> Pagamentos</button>
-    <button data-tab="integrantes"><i class="ti ti-users"></i> Integrantes</button>
+    <button class="active" data-tab="dashboard"><i class="ti ti-layout-dashboard"></i><span class="tab-label">Painel</span></button>
+    <button data-tab="gastos"><i class="ti ti-receipt-2"></i><span class="tab-label">Gastos</span></button>
+    <button data-tab="pagamentos"><i class="ti ti-cash"></i><span class="tab-label">Pgtos</span></button>
+    <button data-tab="integrantes"><i class="ti ti-users"></i><span class="tab-label">Pessoas</span></button>
   </nav>
 
   <!-- DASHBOARD -->
